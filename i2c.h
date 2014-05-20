@@ -14,20 +14,20 @@
 
 #define SDA_BIT   BIT1
 #define SCL_BIT   BIT2
-#define IIC_PORT_DIR P2DIR
-#define IIC_PORT_DATA P2OUT
+#define I2C_PORT_DIR P2DIR
+#define I2C_PORT_DATA P2OUT
 #define SDA_BIT_DATA  ((P2IN & SDA_BIT)==SDA_BIT)
 #define SCL_BIT_DATA  ((P2IN & SCL_BIT)==SCL_BIT)
 
-#define SDA_OUT  (IIC_PORT_DIR |= SDA_BIT)
-#define SDA_IN    (IIC_PORT_DIR &= ~SDA_BIT)
-#define SDA_1     (IIC_PORT_DATA |= SDA_BIT)
-#define SDA_0     (IIC_PORT_DATA &= ~SDA_BIT)
+#define SDA_OUT  (I2C_PORT_DIR |= SDA_BIT)
+#define SDA_IN    (I2C_PORT_DIR &= ~SDA_BIT)
+#define SDA_1     (I2C_PORT_DATA |= SDA_BIT)
+#define SDA_0     (I2C_PORT_DATA &= ~SDA_BIT)
 
-#define SCL_IN    (IIC_PORT_DIR &= ~SCL_BIT)
-#define SCL_OUT  (IIC_PORT_DIR |= SCL_BIT)
-#define SCL_1     (IIC_PORT_DATA |= SCL_BIT)
-#define SCL_0     (IIC_PORT_DATA &= ~SCL_BIT)
+#define SCL_IN    (I2C_PORT_DIR &= ~SCL_BIT)
+#define SCL_OUT  (I2C_PORT_DIR |= SCL_BIT)
+#define SCL_1     (I2C_PORT_DATA |= SCL_BIT)
+#define SCL_0     (I2C_PORT_DATA &= ~SCL_BIT)
 
 void i2c_init();
 void i2c_start();

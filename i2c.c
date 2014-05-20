@@ -91,7 +91,7 @@ void i2c_write(unsigned char data)
 	for(i=8;i!=0;--i)
 	{
 		SDA_OUT;
-		if(data>>7)
+		if(data>>7)  //MSB在前
 			SDA_1;
 		else
 			SDA_0;
@@ -118,7 +118,7 @@ unsigned char i2c_read()
 		SCL_1;
 		utils_delay_us(10);
 		byte <<= 1;
-		byte |= SDA_BIT_DATA;
+		byte |= SDA_BIT_DATA; //MSB在前
 		utils_delay_us(10);
 		SCL_0;
 		utils_delay_us(10);

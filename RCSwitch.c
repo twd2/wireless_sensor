@@ -36,9 +36,9 @@ void rc_send(unsigned long x, unsigned int n)
 {
 	if (n>32) return;
 	int i;
-	for(i=n-1;i!=0;--i)
+	for(i=n;i!=0;--i)
 	{
-		rc_send_bit((x>>(n-1))&1);
+		rc_send_bit((x>>(n-1))&1); //MSBдкЧА
 		x<<=1;
 	}
 }

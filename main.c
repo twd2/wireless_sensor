@@ -18,9 +18,24 @@
 
 void setclk()
 {
-    BCSCTL1 |= DIVA_0+RSEL2+RSEL1+RSEL0; //DIVA /1, max RSEL
-    BCSCTL1 &=~XTS;
-    DCOCTL=DCO1+DCO0+DCO2; //max DCO
+    //BCSCTL1 |= DIVS_0 + DIVM_0 + DIVA_0 + RSEL2 + RSEL1 + RSEL0; //DIVA /1, max RSEL
+	//DCOCTL=DCO1+DCO0+DCO2; //max DCO
+
+	BCSCTL1 |= DIVS_0 + DIVM_0 + DIVA_0; //DIVA,S,M /1, RSEL: default
+	//BCSCTL1 |= DIVS_0 + DIVM_0 + DIVA_3; //DIVA,S,M /1, RSEL: default
+	BCSCTL1 &= ~XTS; //LFXTCLK Low Frequency
+
+    BCSCTL1 &= ~XT2OFF; //power on XT2
+    do
+    {
+    	IFG1 &= ~OFIFG; //clear oscillator fault
+    	unsigned int i;
+    	for (i = 0xFF; i != 0; i--);
+    }
+    while ((IFG1 & OFIFG)); //oscillator fault
+
+    BCSCTL2 |= SELM_2; //MCLK: XT2CLK
+    BCSCTL2 |= SELS; //SMCLK: XT2CLK
 }
 
 void init()
@@ -28,6 +43,8 @@ void init()
 	utils_killdog();
 	sleep_disableTA();
 	setclk();
+
+	//pull down IO ports
 	P1DIR=0xFF;
 	P1OUT=0x00;
 	P2DIR=0xFF;
@@ -87,7 +104,7 @@ void test_sht2x()
 		tostr((int)(tmp*100)%100,buf,2);
 		serial_write_str(buf);
 		serial_write_str("%\r\n");
-		//sleep_second(1);
+		sleep_second(1);
 	}
 }
 
@@ -95,31 +112,46 @@ void main()
 {
 	init();
 
+#ifdef DEBUG_
 	serial_init();
+#endif
 
-	test_sht2x();
+	//test_sht2x();
 
-    for(;;)
+	/*for(;;)
+	{
+		P2OUT = 0x00;
+		utils_delay_us(100);
+		P2OUT = 0xFF;
+		utils_delay_us(100);
+	}*/
+
+	/*rc_init();
+	rc_sync();
+	rc_send(0xFFFFFFFF, 32);*/
+	for(;;)
     {
-    	long tmp,pkg;
-    	tmp=sht2x_temp_raw();
+    	//P3OUT|=BIT0;
+    	long tmp, pkg;
+    	tmp=sht2x_temp()*100;
     	pkg=mkpkg(CFG_TYPE_Temperature, tmp);
     	rc_init();
     	rc_sync();
-    	REPEAT(i,4)
+    	REPEAT(i,8)
     	{
     		rc_send(pkg, 32);
     		rc_sync();
     	}
-    	tmp=sht2x_rh_raw();
+    	tmp=sht2x_rh()*100;
     	pkg=mkpkg(CFG_TYPE_Humidity, tmp);
     	rc_init();
     	rc_sync();
-    	REPEAT(j,4)
+    	REPEAT(j,8)
     	{
     		rc_send(pkg, 32);
     		rc_sync();
     	}
+    	//P3OUT &=~BIT0;
 #ifndef DEBUG_
 		sleep_second(CFG_SnoozingTimeS);
 #else

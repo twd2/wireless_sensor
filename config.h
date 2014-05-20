@@ -8,9 +8,9 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-#define DEBUG_
+//#define DEBUG_
 
-#define CFG_ADDRESS         19L
+#define CFG_ADDRESS         20L
 #define CFG_SnoozingTimeS   60L
 
 #define CFG_ADDR_MASK  0xFF000000L //0b11111111000000000000000000000000L
@@ -22,6 +22,6 @@
 #define CFG_TYPE_Distance     (0x60L<<16) //(0b01100000L<<16)
 #define CFG_TYPE_Illumination (0x61L<<16) //(0b01100001L<<16)
 
-//It doesn't support 0bxxxx?! >_< :<
+//It doesn't support 0bxxxx?! >_< :(
 
 #endif /* CONFIG_H_ */
